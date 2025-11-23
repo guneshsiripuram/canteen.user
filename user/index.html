@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canteen Payment Helper</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Using Google Fonts for a cleaner look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <h1>Canteen Payment Helper</h1>
+            <p id="user-email" style="font-size: 0.9rem; color: #666; margin-bottom: 10px;">Checking
+                login...</p>
+            <button id="logoutBtn" class="btn btn-secondary"
+                style="padding: 5px 10px; font-size: 0.8rem;">Logout</button>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="container">
+        <div class="tab-menu">
+            <button class="tab-btn active" onclick="switchTab('tab-payment')">Payment</button>
+            <button class="tab-btn" onclick="switchTab('tab-account')">My Requests</button>
+        </div>
+    </nav>
+
+    <!-- TAB 1: PAYMENT (Home) -->
+    <div id="tab-payment" class="tab-content">
+        <!-- Process Flow Diagram Section -->
+        <section id="how-it-works" class="container">
+            <h2>How It Works</h2>
+            <div class="flow-diagram">
+                <div class="step">
+                    <div class="icon">👤</div>
+                    <p><strong>You</strong><br>Send UPI to Me</p>
+                </div>
+                <div class="arrow">→</div>
+                <div class="step">
+                    <div class="icon">📱</div>
+                    <p><strong>Intermediary</strong><br>Verifies & Deducts Fee</p>
+                </div>
+                <div class="arrow">→</div>
+                <div class="step">
+                    <div class="icon">🍲</div>
+                    <p><strong>Canteen</strong><br>Receives Cash</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Payment Form Section -->
+        <section id="payment-form" class="container">
+            <h2>Make a Payment Request</h2>
+            <div class="card">
+                <form id="paymentForm">
+                    <div class="form-group">
+                        <label for="studentName">Student Name</label>
+                        <input type="text" id="studentName" placeholder="e.g. Rahul Kumar" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rollNumber">Roll Number</label>
+                        <input type="text" id="rollNumber" placeholder="e.g. 21CSE101" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="amount">Amount to Pay (₹)</label>
+                        <input type="number" id="amount" placeholder="Enter amount (e.g. 50)" min="10" required>
+                        <small id="fee-display">Service Fee: ₹0 | Total You Pay: ₹0</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Payment Step</label>
+                        <div id="payment-section"
+                            style="text-align: center; background: #e9ecef; padding: 15px; border-radius: 5px; margin-bottom: 15px;">
+
+                            <!-- UPI Section -->
+                            <p style="margin-bottom: 10px; font-size: 0.9rem;"><strong>Option 1: Pay
+                                    via UPI App</strong></p>
+                            <div id="qrcode" style="margin: 10px auto; display: none;"></div>
+                            <a id="pay-btn" href="#" class="btn btn-full" style="display: none; text-align: center;">Pay
+                                Now</a>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="note">Note (Optional)</label>
+                        <textarea id="note" placeholder="Any special instructions..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-full">Submit Request</button>
+                </form>
+            </div>
+
+            <!-- Success Message / Token -->
+            <div id="success-message"
+                style="display: none; margin-top: 20px; padding: 20px; background: #fff; border: 2px dashed #28a745; border-radius: 10px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+
+                <h3 style="color: #28a745; margin-bottom: 15px;">✅ Cash Collection Token</h3>
+
+                <div
+                    style="display: flex; justify-content: space-around; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+                    <div>
+                        <small style="color: #666;">You Paid (UPI)</small>
+                        <div id="token-total" style="font-size: 1.2rem; font-weight: bold; color: #333;">₹0</div>
+                    </div>
+                    <div style="font-size: 1.5rem; color: #ccc;">➔</div>
+                    <div>
+                        <small style="color: #666;">Collect Cash</small>
+                        <div id="token-amount" style="font-size: 1.4rem; font-weight: bold; color: #28a745;">₹0</div>
+                    </div>
+                </div>
+
+                <p style="margin-bottom: 15px; font-size: 0.9rem;">
+                    <strong>Step 1:</strong> Show this screen to the Agent.<br>
+                    <strong>Step 2:</strong> Click below to send confirmation.
+                </p>
+
+                <a id="whatsapp-btn" href="#" target="_blank" class="btn btn-success"
+                    style="display: inline-block; width: 100%; background-color: #25D366; border: none; font-weight: bold;">
+                    <span style="margin-right: 5px;">📱</span> Share on WhatsApp
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <!-- TAB 2: MY REQUESTS (History) -->
+    <div id="tab-account" class="tab-content hidden">
+        <!-- Secret Code Section -->
+        <section class="container">
+            <h2>Your Secret Code</h2>
+            <div class="secret-code-card">
+                <p>Share this code with the intermediary</p>
+                <div id="latest-code" class="secret-code-display">----</div>
+                <p style="font-size: 0.8rem; color: #666;">Auto-generated when you enter an amount</p>
+            </div>
+
+            <h3>Code History</h3>
+            <ul id="codeHistory" class="history-list">
+                <!-- List items -->
+            </ul>
+        </section>
+
+        <section id="admin-view" class="container">
+            <h2>Your Requests History</h2>
+            <div class="table-responsive">
+                <table id="requestsTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Name</th>
+                            <th>Roll No</th>
+                            <th>Amount</th>
+                            <th>Fee</th>
+                            <th>Total</th>
+                            <th>UPI Ref</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Rows will be added here by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            <button id="clearData" class="btn btn-secondary">Refresh Data</button>
+        </section>
+
+        <!-- System Logs Section -->
+        <section id="logs-section" class="container">
+            <h2>System Logs (Simulation)</h2>
+            <div id="system-logs"
+                style="background: #333; color: #0f0; padding: 15px; border-radius: 5px; font-family: monospace; height: 150px; overflow-y: auto; font-size: 0.9rem;">
+                > System initialized...
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>Canteen Payment Helper Project</p>
+    </footer>
+
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
